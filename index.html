@@ -13,61 +13,105 @@
             <h1 class="shadow">Zaker</h1>
         </div>
         <div id="content">
+          
 
-            <div class="page" id="page1">
-                <div class="blog" style="width:512px;height:748px;">
-                </div>
-                <div class="blog" style="width:512px;height:340px;"></div>
-                <div class="blog" style="width:512px;height:408px;"></div>
-            </div>
-            <div class="page"  id="page2">
-                <div class="blog" style="width:512px;height:340px;"></div>
-                <div class="blog" style="width:512px;height:748px;float:right;"></div>
-                <div class="blog" style="width:512px;height:408px;"></div>
-            </div>
-            <div class="page"  id="page3">
-                <div style="width:500px;float:left;">
-                    <div class="blog" style="width:512px;height:340px;"></div>
-                    <div class="blog" style="width:512px;height:408px;"></div>    
-                </div>
-                <div class="blog" style="width:512px;height:748px;"></div>
-            </div>
-            <div class="page"  id="page4">
-                <div class="blog" style="width:512px;height:748px;"></div>
-                <div class="blog" style="width:512px;height:340px;"></div>
-                <div class="blog" style="width:512px;height:408px;"></div>
-            </div>
-            <div class="page"  id="page5">
-                <div class="blog" style="width:512px;height:748px;"></div>
-                <div class="blog" style="width:512px;height:340px;"></div>
-                <div class="blog" style="width:512px;height:408px;"></div>
-            </div>
+<!-- 
             <div class="page"  id="page6">
                 <div class="blog" style="width:512px;height:340px;"></div>
                 <div class="blog" style="width:512px;height:340px;"></div>
                 <div class="blog" style="width:1024px;height:408px;"></div>
-            </div>
+            </div> -->
         </div>
     </body>
+
+
+    <script id="template-string" type="x-template">
+    <div class="page">
+        <div class="blog" style="width:{width1}px;height:{height1}px;float:{float1}"></div>
+        <div class="blog" style="width:{width2}px;height:{height2}px;float:{float2}"></div>
+        <div class="blog" style="width:{width3}px;height:{height3}px;float:{float3}"></div>
+    </div>
+    </script>
     <script type="text/javascript" src="jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="jquery.xml2json.js"></script>
     <script type="text/javascript" src="jquery.event.swipe.js"></script>
     <script type="text/javascript" src="jquery.event.move.js"></script>
     <script type="text/javascript">
+
+    var layoutData = [{
+        width1:512,
+        height1:748,
+        float1:'left',
+        width2:512,
+        height2:340,
+        float2:'left',
+        width3:512,
+        height3:408,
+        float3:'left'
+    },{
+        width1:512,
+        height1:340,
+        float1:'left',
+        width2:512,
+        height2:748,
+        float2:'right',
+        width3:512,
+        height3:408,
+        float3:'left'
+    },{
+        width1:512,
+        height1:748,
+        float1:'left',
+        width2:512,
+        height2:340,
+        float2:'left',
+        width3:512,
+        height3:408,
+        float3:'left'
+    },{
+        width1:512,
+        height1:340,
+        float1:'left',
+        width2:512,
+        height2:340,
+        float2:'left',
+        width3:1024,
+        height3:408,
+        float3:'left'
+    }
+    ]
+
+    
+    var templateStr;
+    var blogData = {};
+
+    function ManiData(data){
+        var result = templateStr;
+        for(var k in data){
+            result = result.replace('{'+k+'}',data[k]);
+        }
+        return result;
+    }
+
+
+    function GenerateBlog(templateIndex){
+        var $page = $(ManiData(layoutData[templateIndex]));
+        $page.find('.blog').each(function(index,item){
+            var blogItem = blogData.pop();
+            var htmlStr = '<h2>' + blogItem.title + '</h2>';
+            htmlStr += blogItem.encoded;
+            $(item).html(htmlStr);
+        });
+        return $page;
+    }
+
     $(function(){
+        templateStr = $('#template-string').html();
+
+
         //init
         var colors = ['blue','green','yellow','black','red','purple']
-        var $pages = $('.page');
         var current = 0;
-        var count = $pages.length;
-
-        $pages.each(function(index,item){
-            $(this).css('background-color',colors[index]);
-            $(this).find('.blog').css('background-color',colors[(index+1)%5]);
-        });
-
-        $pages.first().show(0);
-
 
         //event listen
 
@@ -80,17 +124,26 @@
         })
 
         $('#content').on('swipeleft', function(e) {
+            GenerateBlog(current + 1).appendTo('#content');
+
+            var $pages = $('.page');
+            var count = $pages.length;
+
             var width = $(this).width();
             $($pages[current]).animate({
                 left: '-='+width
             }, 500,function(){$(this).hide()});
             current<count-1?current++:current=0;            
+
             $($pages[current]).css('left',width).show().animate({
                 left:'0'
             }, 500);
         })
 
         $('#content').on('swiperight', function(e) {
+            GenerateBlog(current + 1).appendTo('#content');
+
+            var $pages = $('.page');
             var width = $(this).width();
             $($pages[current]).animate({
                 left: '+='+width
@@ -132,15 +185,10 @@
         //load data
         $.get('rss.xml', function(xml) {
             var jsonObj = $.xml2json(xml);
-            var blogData = jsonObj.channel.item;
+            blogData = [].concat(jsonObj.channel.item);
 
-            // console.log(blogData[0]['content:encoded']);
-            $('.blog').each(function(index,item){
-                var blogItem = blogData[index%blogData.length];
-                var content = blogItem.encoded?blogItem.encoded:blogItem['content:encoded'];
-                var htmlStr = "<h2>" + blogItem.title + "</h2>" + content;
-                $(this).html(htmlStr);
-            })
+            var $page = GenerateBlog(current);
+            $page.appendTo('#content').show();
         }); 
     })
     </script>
