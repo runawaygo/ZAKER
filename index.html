@@ -25,19 +25,44 @@
     </body>
 
 
-    <script id="template-string" type="x-template">
+    <script id="page-template" type="x-template">
     <div class="page">
         <div class="blog" style="width:{width1}px;height:{height1}px;float:{float1}"></div>
         <div class="blog" style="width:{width2}px;height:{height2}px;float:{float2}"></div>
         <div class="blog" style="width:{width3}px;height:{height3}px;float:{float3}"></div>
     </div>
     </script>
+    <script id="blog-template" type="x-template">
+    <h2>{title}</h2>{encoded}
+    </script>
     <script type="text/javascript" src="jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="jquery.xml2json.js"></script>
     <script type="text/javascript" src="jquery.event.swipe.js"></script>
     <script type="text/javascript" src="jquery.event.move.js"></script>
-    <script type="text/javascript">
+    <script type="text/javascript" src="class.js"></script>
+    <script type="text/javascript" id="rssStore">
+    function RssStore(url){
+        this.url = url;
+        this.blogs  = [];
+    }
+    RssStore.prototype.fetch = function(callback){
+        var self = this;
+        $.get(this.url, function(xml) {
+            var jsonObj = $.xml2json(xml);
+            self.blogs = [].concat(jsonObj.channel.item);
 
+            callback&&callback();
+        }); 
+    };
+    RssStore.prototype.getRecord = function(index){
+        return "something";
+    };
+    RssStore.prototype.pop = function(){
+        if(this.blogs.length === 0) return null;
+        return this.blogs.pop();
+    };
+    </script>
+    <script type="text/javascript" id="view">
     var layoutData = [{
         width1:512,
         height1:748,
@@ -81,36 +106,52 @@
     }
     ]
 
-    
-    var templateStr;
-    var blogData = {};
-
-    function ManiData(data){
-        var result = templateStr;
-        for(var k in data){
-            result = result.replace('{'+k+'}',data[k]);
+    var View = Class.extend({
+        init:function(templateId, data){
+            this.template = $(templateId).html();
+            this.data = data;
+        },
+        fillData:function(){
+            var result = this.template;
+            var data = this.data;
+            for(var k in data){
+                result = result.replace('{'+k+'}',data[k]);
+            }
+            return result;
+        },
+        render:function(){
+            this.$el = $(this.fillData());
+            return this;
         }
-        return result;
-    }
+    });
 
+    var PageView = View.extend({
+        init:function(data,rssStore){
+            this._super("#page-template",data);
+            this.rssStore = rssStore;
+        },
+        render:function(){
+            this.$el = $(this.fillData());
+            var self = this;         
+            this.$el.find('.blog').each(function(index,item){
+                var blogView = new BlogView(self.rssStore.pop());
+                blogView.render().$el.appendTo(item);
+            })
+            return this;
+        }
+    });
 
-    function GenerateBlog(templateIndex){
-        var $page = $(ManiData(layoutData[templateIndex]));
-        $page.find('.blog').each(function(index,item){
-            var blogItem = blogData.pop();
-            var htmlStr = '<h2>' + blogItem.title + '</h2>';
-            htmlStr += blogItem.encoded;
-            $(item).html(htmlStr);
-        });
-        return $page;
-    }
+    var BlogView = View.extend({
+        init:function(data){
+            this._super("#blog-template",data);
+        }
+    });
+    </script>
+    <script type="text/javascript">
 
     $(function(){
-        templateStr = $('#template-string').html();
-
 
         //init
-        var colors = ['blue','green','yellow','black','red','purple']
         var current = 0;
 
         //event listen
@@ -124,7 +165,7 @@
         })
 
         $('#content').on('swipeleft', function(e) {
-            GenerateBlog(current + 1).appendTo('#content');
+            generatePageView();
 
             var $pages = $('.page');
             var count = $pages.length;
@@ -141,7 +182,10 @@
         })
 
         $('#content').on('swiperight', function(e) {
-            GenerateBlog(current + 1).appendTo('#content');
+            new PageView(layoutData[2])
+                .render()
+                .$el.appendTo('#content')
+                .show();
 
             var $pages = $('.page');
             var width = $(this).width();
@@ -166,7 +210,7 @@
             }, 500);
         });
 
-        $('.blog').delegate('h2','click',function(event){
+        $('#content').delegate('h2','click',function(event){
             $blog = $(this).parent();
             if($blog.hasClass('fullscreen')){
                 $blog.removeClass('fullscreen');
@@ -182,14 +226,20 @@
             event.stopPropagation();
         })
 
-        //load data
-        $.get('rss.xml', function(xml) {
-            var jsonObj = $.xml2json(xml);
-            blogData = [].concat(jsonObj.channel.item);
 
-            var $page = GenerateBlog(current);
-            $page.appendTo('#content').show();
-        }); 
+        //logic
+        function generatePageView(){
+            var pageView = new PageView(layoutData[0],rssStore);
+            pageView.render();
+            pageView.$el.appendTo('#content').show();
+            return pageView;
+        }
+
+        var rssStore = new RssStore("rss.xml");
+        rssStore.fetch(function(){
+            generatePageView();
+
+        });
     })
     </script>
 </html>
