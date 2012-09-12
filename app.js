@@ -41,18 +41,6 @@ $(function(){
         }, 500);
     });
 
-
-    $().click(function(){
-        var width = $(this).width();
-        $($pages[current]).animate({
-            left: '-='+width
-        }, 500,function(){$(this).hide()});
-        current<count-1?current++:current=0;            
-        $($pages[current]).css('left',width).show().animate({
-            left:'0'
-        }, 500);
-    });
-
     $('#content').delegate('h2','click',function(event){
         $blog = $(this).parent();
         if($blog.hasClass('fullscreen')){
@@ -78,8 +66,8 @@ $(function(){
     }
 
     var rssStore = new RssStore("rss.xml");
+    var contentView = new ContentView(rssStore);
     rssStore.fetch(function(){
-        generatePageView();
-
+        contentView.render();
     });
 })

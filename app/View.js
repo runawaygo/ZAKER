@@ -81,3 +81,42 @@ var BlogView = View.extend({
         this._super("#blog-template",data);
     }
 });
+
+var ContentView = View.extend({
+    init:function(rssStore){
+        this.rssStore = rssStore;
+
+        this.pages = [];
+        this.current = -1;
+        this.$el = $('#content');
+    },
+    newPage:function(){
+        var pageView = new PageView(layoutData[0],this.rssStore);
+        pageView.render();
+        pageView.$el.appendTo(this.$el).show();
+
+        this.pages.push(pageView);
+        return this;
+    },
+    moveNextPage:function(){
+        if(this.current >= this.pages.length-1){
+            this.newPage();
+        }
+        this.pages[this.current].swipeOutLeft();
+        this.pages[++this.current].swipeInRight();
+    },
+    movePreviousPage:function(){
+        if(this.current >0){
+            this.pages[this.current].swipeOutRight();
+            this.pages[++this.current].swipeInLeft();
+        }
+        else{
+            this.pages[this.current].swipeInOut();
+        }
+    },
+    render:function(){
+        this.newPage();
+        this.current = 0;
+        this.pages[this.current].$el.show();
+    }
+});
