@@ -56,6 +56,28 @@ var View = Class.extend({
     },
     render:function(){
         this.$el = $(this.fillData());
+        this.$el.data('view',this);
+        return this;
+    }
+});
+
+var BlogView = View.extend({
+    init:function(data){
+        this._super("#blog-template",data);
+
+        this.isFullScreen = false;
+    },
+    switchSize:function(){
+        return this.isFullScreen?this.piece():this.fullScreen();
+    },
+    fullScreen:function(){
+        this.$el.addClass('fullscreen');
+        this.isFullScreen = true;
+        return this;
+    },
+    piece:function(){
+        this.$el.removeClass('fullscreen');  
+        this.isFullScreen = false;
         return this;
     }
 });
@@ -69,43 +91,50 @@ var PageView = View.extend({
         this.$el.animate({
             left: '-='+ this.$el.width()
         }, 500,function(){$(this).hide()});
+        return this;
     },
     swipeOutRight:function(){
         this.$el.animate({
             left: '+='+ this.$el.width()
         }, 500,function(){$(this).hide()});
+        return this;
     },
     swipeInLeft:function(){
         this.$el.css('left',0 - this.$el.width()).show().animate({
             left:0
         }, 500);
+        return this;
     },
     swipeInRight:function(){
         this.$el.css('left',this.$el.width()).show().animate({
             left:0
         }, 500);
+        return this;
     },
-    swipeInOut:function(){
+    swipeInOutLeft:function(){
         this.$el.animate({
             left:200
         }, 200,function(){
             $(this).animate({left:0},200);
         });
+        return this;
+    },
+    swipeInOutRight:function(){
+        this.$el.animate({
+            left:-200
+        }, 200,function(){
+            $(this).animate({left:0},200);
+        });
+        return this;
     },
     render:function(){
         this._super();
         var self = this;         
-        this.$el.find('.blog').each(function(index,item){
+        this.$el.find('.blog-container').each(function(index,item){
             var blogView = new BlogView(self.rssStore.pop());
             blogView.render().$el.appendTo(item);
         })
         return this;
-    }
-});
-
-var BlogView = View.extend({
-    init:function(data){
-        this._super("#blog-template",data);
     }
 });
 
@@ -138,7 +167,7 @@ var ContentView = View.extend({
             this.pages[--this.current].swipeInLeft();
         }
         else{
-            this.pages[this.current].swipeInOut();
+            this.pages[this.current].swipeInOutLeft();
         }
     },
     render:function(){
