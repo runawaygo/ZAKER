@@ -10,35 +10,11 @@ $(function(){
     })
 
     $('#content').on('swipeleft', function(e) {
-        var newPage = generatePageView();
-
-
-        var width = $(this).width();
-        $($pages[current]).animate({
-            left: '-='+width
-        }, 500,function(){$(this).hide()});
-    
-
-        newPage.$el.css('left',width).show().animate({
-            left:'0'
-        }, 500);
+        contentView.moveNextPage();
     })
 
     $('#content').on('swiperight', function(e) {
-        new PageView(layoutData[2])
-            .render()
-            .$el.appendTo('#content')
-            .show();
-
-        var $pages = $('.page');
-        var width = $(this).width();
-        $($pages[current]).animate({
-            left: '+='+width
-        }, 500,function(){$(this).hide()});
-        current>0?current--:current=count-1;            
-        $($pages[current]).css('left',0-width).show().animate({
-            left:'0'
-        }, 500);
+        contentView.movePreviousPage();
     });
 
     $('#content').delegate('h2','click',function(event){

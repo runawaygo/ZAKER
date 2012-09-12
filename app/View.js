@@ -65,6 +65,33 @@ var PageView = View.extend({
         this._super("#page-template",data);
         this.rssStore = rssStore;
     },
+    swipeOutLeft:function(){
+        this.$el.animate({
+            left: '-='+ this.$el.width()
+        }, 500,function(){$(this).hide()});
+    },
+    swipeOutRight:function(){
+        this.$el.animate({
+            left: '+='+ this.$el.width()
+        }, 500,function(){$(this).hide()});
+    },
+    swipeInLeft:function(){
+        this.$el.css('left',0 - this.$el.width()).show().animate({
+            left:0
+        }, 500);
+    },
+    swipeInRight:function(){
+        this.$el.css('left',this.$el.width()).show().animate({
+            left:0
+        }, 500);
+    },
+    swipeInOut:function(){
+        this.$el.animate({
+            left:200
+        }, 200,function(){
+            $(this).animate({left:0},200);
+        });
+    },
     render:function(){
         this._super();
         var self = this;         
@@ -108,7 +135,7 @@ var ContentView = View.extend({
     movePreviousPage:function(){
         if(this.current >0){
             this.pages[this.current].swipeOutRight();
-            this.pages[++this.current].swipeInLeft();
+            this.pages[--this.current].swipeInLeft();
         }
         else{
             this.pages[this.current].swipeInOut();
