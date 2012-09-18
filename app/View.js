@@ -144,6 +144,8 @@ var ContentView = View.extend({
     init:function(rssStore){
         this.rssStore = rssStore;
 
+        this.bottomBarView = new BottomBarView();
+
         this.pages = [];
         this.current = -1;
         this.$el = $('#content');
@@ -179,6 +181,7 @@ var ContentView = View.extend({
         this.current = 0;
         this.newPage();
         this.getCurrentPage().$el.show();
+        this.bottomBarView.render().$el.appendTo('body');
     }
 });
 

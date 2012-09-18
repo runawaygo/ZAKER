@@ -1,7 +1,7 @@
 window.bus = $(window);
 
 $(function(){
-    //event listen
+    // //event listen
     $('#cover').on('swipeup',function(){
         $(this).slideUp(200);
     });
@@ -11,11 +11,11 @@ $(function(){
     })
 
     $('#content').on('swipeleft', function(e) {
-        contentView.moveNextPage();
+        mainView.moveNextPage();
     })
 
     $('#content').on('swiperight', function(e) {
-        contentView.movePreviousPage();
+        mainView.movePreviousPage();
     });
 
     $('body').delegate('a','click',function(e){
@@ -30,12 +30,11 @@ $(function(){
     //logic
 
     var rssStore = new RssStore("rss.xml");
-    var contentView = new ContentView(rssStore);
-    var bottomBarView = new BottomBarView();
 
+    var MainView = mainViewFactory();
+    var mainView = new MainView(rssStore);
 
-    bottomBarView.render().$el.appendTo('body');
     rssStore.fetch(function(){
-        contentView.render();
+        mainView.render();
     });
 })
