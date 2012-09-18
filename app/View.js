@@ -73,11 +73,13 @@ var BlogView = View.extend({
     fullScreen:function(){
         this.$el.addClass('fullscreen');
         this.isFullScreen = true;
+        bus.trigger('fullscreen');
         return this;
     },
     piece:function(){
         this.$el.removeClass('fullscreen');  
         this.isFullScreen = false;
+        bus.trigger('piece');
         return this;
     }
 });
@@ -170,9 +172,31 @@ var ContentView = View.extend({
             this.pages[this.current].swipeInOutLeft();
         }
     },
+    getCurrentPage:function(){
+        return this.pages[this.current];
+    },
     render:function(){
-        this.newPage();
         this.current = 0;
-        this.pages[this.current].$el.show();
+        this.newPage();
+        this.getCurrentPage().$el.show();
     }
 });
+
+var BottomBarView = View.extend({
+    init:function(){
+        var self = this;
+        this._super('#bottom-bar-template',{});
+        
+        bus.bind('fullscreen',function(){self.show();});
+        bus.bind('piece',function(){self.hide();});
+    },
+    show:function(){
+        this.$el.show();
+        return this;
+    },
+    hide:function(){
+        this.$el.hide();  
+        return this;
+    }
+})
+

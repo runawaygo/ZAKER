@@ -17,15 +17,19 @@
     </body>
 
     <script id="page-template" type="x-template">
-    <div class="page">
-        <div class="blog-container" style="width:{width1}px;height:{height1}px;float:{float1}"></div>
-        <div class="blog-container" style="width:{width2}px;height:{height2}px;float:{float2}"></div>
-        <div class="blog-container" style="width:{width3}px;height:{height3}px;float:{float3}"></div>
-    </div>
+        <div class="page">
+            <div class="blog-container" style="width:{width1}px;height:{height1}px;float:{float1}"></div>
+            <div class="blog-container" style="width:{width2}px;height:{height2}px;float:{float2}"></div>
+            <div class="blog-container" style="width:{width3}px;height:{height3}px;float:{float3}"></div>
+        </div>
     </script>
     <script id="blog-template" type="x-template">
-    <div class="blog"><h2>{title}</h2>{encoded}</div>
+        <div class="blog"><h2>{title}</h2>{encoded}</div>
     </script>
+    <script type="x-template" id="bottom-bar-template">
+        <div class="bottom-bar"><div class="btn-star btn">Star</div></div>
+    </script>
+
     <script type="text/javascript" src="lib/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="lib/jquery.xml2json.js"></script>
     <script type="text/javascript" src="lib/jquery.event.swipe.js"></script>

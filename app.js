@@ -1,6 +1,7 @@
+window.bus = $(window);
+
 $(function(){
     //event listen
-
     $('#cover').on('swipeup',function(){
         $(this).slideUp(200);
     });
@@ -22,20 +23,18 @@ $(function(){
     });
 
     $('#content').delegate('.blog','click',function(e){
-        var view = $(this).data('view');
-        view.switchSize();
+        var blogView = $(this).data('view');
+        blogView.switchSize();
+        blogView.$el.addClass('read');
     })
-
     //logic
-    function generatePageView(){
-        var pageView = new PageView(layoutData[0],rssStore);
-        pageView.render();
-        pageView.$el.appendTo('#content').show();
-        return pageView;
-    }
 
     var rssStore = new RssStore("rss.xml");
     var contentView = new ContentView(rssStore);
+    var bottomBarView = new BottomBarView();
+
+
+    bottomBarView.render().$el.appendTo('body');
     rssStore.fetch(function(){
         contentView.render();
     });
