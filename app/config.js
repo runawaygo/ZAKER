@@ -1,5 +1,6 @@
 function mainViewFactory(){
-	if(new Date().getSeconds()%2 ===0){
+	if(1){
+	// if(new Date().getSeconds()%2 ===0){
 		addCSS('index.css');
 		return ContentView;
 	}

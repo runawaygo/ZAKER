@@ -152,8 +152,7 @@ var ContentView = View.extend({
     },
     newPage:function(){
         var pageView = new PageView(layoutData[0],this.rssStore);
-        pageView.render();
-        pageView.$el.appendTo(this.$el).show();
+        pageView.render().$el.appendTo(this.$el);
 
         this.pages.push(pageView);
         return this;
@@ -180,6 +179,7 @@ var ContentView = View.extend({
     render:function(){
         this.current = 0;
         this.newPage();
+
         this.getCurrentPage().$el.show();
         this.bottomBarView.render().$el.appendTo('body');
     }

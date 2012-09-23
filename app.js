@@ -30,11 +30,17 @@ $(function(){
     //logic
 
     var rssStore = new RssStore("rss.xml");
-
     var MainView = mainViewFactory();
     var mainView = new MainView(rssStore);
 
     rssStore.fetch(function(){
         mainView.render();
     });
+
+    window.onpopstate=function(e){
+        var hashTag = window.location.hash;
+        if(hashTag === null) return;
+        var pageNum = parseInt(hashTag.substring(1))
+        
+    }
 })
