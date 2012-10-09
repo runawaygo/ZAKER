@@ -39,27 +39,7 @@ var layoutData = [{
     height3:408,
     float3:'left'
 }
-]
-
-var View = Class.extend({
-    init:function(templateId, data){
-        this.template = $(templateId).html();
-        this.data = data;
-    },
-    fillData:function(){
-        var result = this.template;
-        var data = this.data;
-        for(var k in data){
-            result = result.replace('{'+k+'}',data[k]);
-        }
-        return result;
-    },
-    render:function(){
-        this.$el = $(this.fillData());
-        this.$el.data('view',this);
-        return this;
-    }
-});
+];
 
 var BlogView = View.extend({
     init:function(data){

@@ -5,6 +5,7 @@
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <!-- <link rel="stylesheet" type="text/css" href="index.css" /> -->
+        <link rel="stylesheet" type="text/css" href="index2.css" />
     </head>
     <body>
         <div id="status-bar">status-bar</div>
@@ -12,6 +13,7 @@
             <h1>Zaker</h1>
             <h1 class="shadow">Zaker</h1>
         </div>
+        <div id="topbar"></div>
         <div id="content">
         </div>
     </body>
@@ -30,14 +32,30 @@
         <div class="bottom-bar"><div class="btn-star btn">Star</div></div>
     </script>
 
+    <script id="masonry-item-template" type="x-template">
+        <div class="blog"><h2>{title}</h2>{encoded}</div>
+    </script>
+
+    <script id="masonry-topbar-template" type="x-template">
+        <div class="title">1988</div>
+        <div class="items-count">{left} / {total}</div>
+    </script>
+
+    <script type="text/javascript" src="lib/class.js"></script>
     <script type="text/javascript" src="lib/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="lib/jquery.xml2json.js"></script>
     <script type="text/javascript" src="lib/jquery.event.swipe.js"></script>
     <script type="text/javascript" src="lib/jquery.event.move.js"></script>
-    <script type="text/javascript" src="lib/class.js"></script>
+    <script type="text/javascript" src="lib/jquery.lightbox.js"></script>
     <script type="text/javascript" src="lib/jquery.masonry.js"></script>
 
+    <script type="text/javascript" src="app/EventBus.js"></script>
+    <script type="text/javascript" src="app/ViewBase.js"></script>
+    <!--
+    <script type="text/javascript" src="app/Controller.js"></script>
     <script type="text/javascript" src="app/View.js"></script>
+    -->
+    <script type="text/javascript" src="app/MasonryController.js"></script>
     <script type="text/javascript" src="app/MasonryView.js"></script>
     <script type="text/javascript" src="app/RssStore.js"></script>
     <script type="text/javascript" src="app/config.js"></script>
