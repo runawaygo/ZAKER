@@ -7,4 +7,11 @@ $(function(){
         mainView.render();
         topbarView.render();
     });
+    var model = new Event({name:"superowlf"});
+    
+    var testFunc = function(){alert('superwolf')};
+    model.on('dd',testFunc);
+    model.on('dd',testFunc);
+    model.off('dd',testFunc);
+    model.go('dd');
 })
