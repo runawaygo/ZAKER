@@ -16,7 +16,8 @@ var View = Class.extend({
             this.$el.html(this.fillData());
         else
             this.$el = $(this.fillData());
-        this.$el.data('view',this);
+        
+        // this.$el.data('view',this);
         return this;
     }
 });

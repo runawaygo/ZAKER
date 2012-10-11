@@ -17,3 +17,9 @@ function addCSS(href){
 	link.type = 'text/css';
 	document.getElementsByTagName("head")[0].appendChild(link);
 }
+
+$(function(){
+    $('body').delegate('a','click',function(e){
+        e.preventDefault();
+    });
+});

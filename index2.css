@@ -54,3 +54,7 @@ html,body{
 	margin-bottom:20px;
 	overflow:hidden;
 }
+
+.blog.read{
+	opacity:0.8;
+}

@@ -1,6 +1,23 @@
 var BlogView = View.extend({
     init:function(data){
         this._super("#masonry-item-template",data);
+    },
+    initHandlers:function(){
+        var self = this;
+        this.$el.click(function(){
+            self.read();
+        });
+        return this;
+    },
+    read:function(){
+        if(this.$el.hasClass('read')) return;
+
+        this.$el.addClass('read');
+        bus.go('read');
+        return this;
+    },
+    render:function(){
+        return this._super().initHandlers();
     }
 });
 
@@ -8,6 +25,13 @@ var TopbarView = View.extend({
     init:function(data){
         this._super("#masonry-topbar-template",data);
         this.$el = $('#topbar');
+        this.initEvents();
+    },
+    initEvents:function(){
+        bus.on('read',function(){
+            this.data.left--;
+            this.render();
+        },this);
     },
     render:function(){
         this._super();
